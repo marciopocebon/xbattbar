@@ -585,7 +585,7 @@ void battery_check(void)
 
 #endif /* __FreeBSD__ */
 
-#ifdef __NetBSD__
+#if defined(__NetBSD__) || defined(__OpenBSD__)
 
 #include <machine/apmvar.h>
 
@@ -643,7 +643,7 @@ void battery_check(void)
 
 #include <errno.h>
 
-#if defined(APM)
+# if defined(APM)
 
 #include <linux/apm_bios.h>
 
@@ -721,7 +721,7 @@ void battery_check(void)
         signal(SIGALRM, (void *)(battery_check));
 }
 
-#else /* ACPI */
+# else /* ACPI */
 
 #define         PATH_ACPI_CHARGE        "/sys/class/power_supply/BAT0"
 #define         PATH_ACPI_POWER         "/sys/class/power_supply/AC/online"
@@ -774,7 +774,7 @@ void battery_check(void)
         signal(SIGALRM, (void *)(battery_check));
 }
 
-#endif /* ACPI */
+# endif /* ACPI */
 
 #endif /* linux */
 
