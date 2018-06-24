@@ -28,7 +28,15 @@ We tested this program on:
 It's almost the same as cases for normal X window applications:
 
 xmkmf -a
+
 make
+
+or if you have LINUX+APM instead of LINUX+ACPI (default)
+
+make CFLAGS="-DAPM"
+
+and then
+
 make install
 make install.man
 

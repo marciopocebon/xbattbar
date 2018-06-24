@@ -642,6 +642,9 @@ void battery_check(void)
 #ifdef linux
 
 #include <errno.h>
+
+#if defined(APM)
+
 #include <linux/apm_bios.h>
 
 #define         APM_PROC                "/proc/apm"
@@ -717,6 +720,61 @@ void battery_check(void)
         }
         signal(SIGALRM, (void *)(battery_check));
 }
+
+#else /* ACPI */
+
+#define         PATH_ACPI_CHARGE        "/sys/class/power_supply/BAT0"
+#define         PATH_ACPI_POWER         "/sys/class/power_supply/AC/online"
+
+#define         ACPI_STAT_LINE_ON       1
+#define         ACPI_STAT_LINE_OFF      0
+
+int first = 1;
+void battery_check(void)
+{
+        FILE *pt;
+        int r, p, f, n;
+
+        if ((pt = fopen(PATH_ACPI_CHARGE"/charge_full", "r")) == NULL) {
+                signal(SIGALRM, (void *)(battery_check));
+                perror("fopen");
+        }
+
+        fscanf(pt, "%d", &f);
+        fclose(pt);
+
+        if ((pt = fopen(PATH_ACPI_CHARGE"/charge_now", "r")) == NULL) {
+                signal(SIGALRM, (void *)(battery_check));
+                perror("fopen");
+        }
+
+        fscanf(pt, "%d", &n);
+        fclose(pt);
+
+        if ((r = (int)(n / (float)f * 100)) > 100)
+                r = 100;
+
+        if ((pt = fopen(PATH_ACPI_POWER, "r")) == NULL) {
+                signal(SIGALRM, (void *)(battery_check));
+                perror("fopen");
+        }
+
+        fscanf(pt, "%d", &p);
+        fclose(pt);
+
+        ++elapsed_time;
+
+        if (first || ac_line != p || battery_level != r) {
+                first = 0;
+                ac_line = p;
+                battery_level = r;
+                redraw();
+        }
+
+        signal(SIGALRM, (void *)(battery_check));
+}
+
+#endif /* ACPI */
 
 #endif /* linux */
 
