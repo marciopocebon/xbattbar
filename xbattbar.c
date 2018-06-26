@@ -723,9 +723,7 @@ void battery_check(void)
 
 # else /* ACPI */
 
-#define         PATH_ACPI_CHARGE        "/sys/class/power_supply/BAT0"
-#define         PATH_ACPI_POWER         "/sys/class/power_supply/AC/online"
-
+#define         PATH_ACPI_INTERFACE     "/sys/class/power_supply"
 #define         ACPI_STAT_LINE_ON       1
 #define         ACPI_STAT_LINE_OFF      0
 
@@ -735,17 +733,19 @@ void battery_check(void)
         FILE *pt;
         int r, p, f, n;
 
-        if ((pt = fopen(PATH_ACPI_CHARGE"/charge_full", "r")) == NULL) {
+        if ((pt = fopen(PATH_ACPI_INTERFACE"/BAT0/charge_full", "r")) == NULL &&
+	    (pt = fopen(PATH_ACPI_INTERFACE"/BAT0/energy_full", "r")) == NULL) {
                 signal(SIGALRM, (void *)(battery_check));
-                perror("fopen");
+                perror("fopen "PATH_ACPI_INTERFACE"/BAT0/[charge|energy]_full");
         }
 
         fscanf(pt, "%d", &f);
         fclose(pt);
 
-        if ((pt = fopen(PATH_ACPI_CHARGE"/charge_now", "r")) == NULL) {
+        if ((pt = fopen(PATH_ACPI_INTERFACE"/BAT0/charge_now", "r")) == NULL &&
+	    (pt = fopen(PATH_ACPI_INTERFACE"/BAT0/energy_now", "r")) == NULL) {
                 signal(SIGALRM, (void *)(battery_check));
-                perror("fopen");
+                perror("fopen "PATH_ACPI_INTERFACE"/BAT0/[charge|energy]_now");
         }
 
         fscanf(pt, "%d", &n);
@@ -754,9 +754,10 @@ void battery_check(void)
         if ((r = (int)(n / (float)f * 100)) > 100)
                 r = 100;
 
-        if ((pt = fopen(PATH_ACPI_POWER, "r")) == NULL) {
+        if ((pt = fopen(PATH_ACPI_INTERFACE"/AC/online", "r")) == NULL &&
+	    (pt = fopen(PATH_ACPI_INTERFACE"/ADP1/online", "r")) == NULL) {
                 signal(SIGALRM, (void *)(battery_check));
-                perror("fopen");
+                perror("fopen "PATH_ACPI_INTERFACE"/[AC|ADP1]/online");
         }
 
         fscanf(pt, "%d", &p);
