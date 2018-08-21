@@ -679,9 +679,7 @@ void battery_check(void)
         /* get current status */
         errno = 0;
         if ((pt = fopen(APM_PROC, "r")) == NULL) {
-                fprintf(stderr, "xbattbar: Can't read proc info: %s\n",
-                        strerror(errno));
-                signal(SIGALRM, (void *)(battery_check));
+                perror("xbattbar: cannot read proc info");
                 exit(1);
         }
 
@@ -727,8 +725,6 @@ void battery_check(void)
 # else /* ACPI */
 
 #define         PATH_ACPI_INTERFACE     "/sys/class/power_supply"
-#define         ACPI_STAT_LINE_ON       1
-#define         ACPI_STAT_LINE_OFF      0
 
 int first = 1;
 void battery_check(void)
@@ -737,18 +733,18 @@ void battery_check(void)
         int r, p, f, n;
 
         if ((pt = fopen(PATH_ACPI_INTERFACE"/BAT0/charge_full", "r")) == NULL &&
-	    (pt = fopen(PATH_ACPI_INTERFACE"/BAT0/energy_full", "r")) == NULL) {
-                signal(SIGALRM, (void *)(battery_check));
-                perror("fopen "PATH_ACPI_INTERFACE"/BAT0/[charge|energy]_full");
+            (pt = fopen(PATH_ACPI_INTERFACE"/BAT0/energy_full", "r")) == NULL) {
+                perror("xbattbar: cannot open "PATH_ACPI_INTERFACE"/BAT0/(charge|energy)_full");
+                exit(1);
         }
 
         fscanf(pt, "%d", &f);
         fclose(pt);
 
         if ((pt = fopen(PATH_ACPI_INTERFACE"/BAT0/charge_now", "r")) == NULL &&
-	    (pt = fopen(PATH_ACPI_INTERFACE"/BAT0/energy_now", "r")) == NULL) {
-                signal(SIGALRM, (void *)(battery_check));
-                perror("fopen "PATH_ACPI_INTERFACE"/BAT0/[charge|energy]_now");
+            (pt = fopen(PATH_ACPI_INTERFACE"/BAT0/energy_now", "r")) == NULL) {
+                perror("xbattbar: cannot open "PATH_ACPI_INTERFACE"/BAT0/(charge|energy)_now");
+                exit(1);
         }
 
         fscanf(pt, "%d", &n);
@@ -757,10 +753,10 @@ void battery_check(void)
         if ((r = (int)(n / (float)f * 100)) > 100)
                 r = 100;
 
-        if ((pt = fopen(PATH_ACPI_INTERFACE"/AC/online", "r")) == NULL &&
-	    (pt = fopen(PATH_ACPI_INTERFACE"/ADP1/online", "r")) == NULL) {
-                signal(SIGALRM, (void *)(battery_check));
-                perror("fopen "PATH_ACPI_INTERFACE"/[AC|ADP1]/online");
+        if ((pt = fopen(PATH_ACPI_INTERFACE"/AC/online", "r"))   == NULL &&
+            (pt = fopen(PATH_ACPI_INTERFACE"/ADP1/online", "r")) == NULL) {
+                perror("xbattbar: cannot open "PATH_ACPI_INTERFACE"/(AC|ADP1)/online");
+                exit(1);
         }
 
         fscanf(pt, "%d", &p);
