@@ -34,7 +34,7 @@ static char *ReleaseVersion="1.4.2";
 #include <sys/ioctl.h>
 #include <X11/Xlib.h>
 
-#define PollingInterval 10      /* APM polling interval in sec */
+#define PollingInterval 10      /* polling interval in sec */
 #define BI_THICKNESS    3       /* battery indicator thickness in pixels */
 
 #define BI_Bottom       0
@@ -69,7 +69,7 @@ char *OFFOUT_C = "red";
 
 int alwaysontop = False;
 
-struct itimerval IntervalTimer;         /* APM polling interval timer */
+struct itimerval IntervalTimer;         /* polling interval timer */
 
 int bi_direction = BI_Bottom;           /* status bar location */
 int bi_height;                          /* height of Battery Indicator */
@@ -274,7 +274,7 @@ main(int argc, char **argv)
         }
 
         /*
-         * set APM polling interval timer
+         * set polling interval timer
          */
         IntervalTimer.it_interval.tv_sec  = (long)bi_interval;
         IntervalTimer.it_interval.tv_usec = (long)0;
