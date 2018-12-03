@@ -18,11 +18,11 @@ The release version of this xbattbar is 1.5
 * Supported platform
 
 I tested this program on:
-	Linux + ACPI	4.17
+	Linux/ACPI	4.17+
 
 Remained untested:
 
-	Linux + APM
+	Linux/APM
 	FreeBSD
 	NetBSD
 	OpenBSD
