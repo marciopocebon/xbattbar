@@ -17,7 +17,7 @@
 .\" License along with this program; if not, write to the Free Software
 .\" Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.Dd December 5, 1998
+.Dd December 3, 2018
 .Dt XBATTBAR 1
 .Os
 .Sh NAME
@@ -36,8 +36,8 @@
 .Sh DESCRIPTION
 .Nm xbattbar
 shows the current (laptop) battery status in the X window environment.
-Battery status is obtained through the APM kernel module.
-The APM kernel module depends on your UNIX platform,
+Battery status is obtained through the ACPI/APM kernel modules.
+The ACPI/APM kernel module depends on your UNIX platform,
 therefore, consult your documentation for its detail.
 .Pp
 .Nm xbattbar
@@ -81,7 +81,7 @@ options.
 .Pp
 .Nm xbattbar
 trys to know its battery status in every 10 seconds in default.
-This is achived by APM polling.
+This is achived by ACPI/APM polling.
 .Nm -p
 option sets the polling interval in second.
 .Pp
