@@ -25,8 +25,6 @@
 
 static char *ReleaseVersion="1.5";
 
-#include <sys/types.h>
-#include <sys/time.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,6 +33,8 @@ static char *ReleaseVersion="1.5";
 #include <unistd.h>
 #include <sys/file.h>
 #include <sys/ioctl.h>
+#include <sys/time.h>
+#include <sys/types.h>
 #include <X11/Xlib.h>
 
 #define PollingInterval 10      /* polling interval in sec */
@@ -476,8 +476,8 @@ void estimate_remain()
 
 #ifdef __bsdi__
 
-#include <machine/apm.h>
-#include <machine/apmioctl.h>
+# include <machine/apm.h>
+# include <machine/apmioctl.h>
 
 int first = 1;
 void battery_check(void)
@@ -498,7 +498,7 @@ void battery_check(void)
                 fprintf(stderr, "xbattbar: PIOCAPMREQ: APM_GET_POWER_STATUS error 0x%x\n",
                         ar.err);
         }
-        close (fd);
+        close(fd);
 
         if (first || ac_line != ((ar.bret >> 8) & 0xff) ||
             battery_level != (ar.cret&0xff)) {
@@ -514,20 +514,20 @@ void battery_check(void)
 
 #ifdef __FreeBSD__
 
-#include <machine/apm_bios.h>
+# include <machine/apm_bios.h>
 
-#define         APMDEV21                "/dev/apm0"
-#define         APMDEV22                "/dev/apm"
+# define	APMDEV21		"/dev/apm0"
+# define	APMDEV22		"/dev/apm"
 
-#define         APM_STAT_UNKNOWN        255
+# define	APM_STAT_UNKNOWN	255
 
-#define         APM_STAT_LINE_OFF       0
-#define         APM_STAT_LINE_ON        1
+# define	APM_STAT_LINE_OFF	0
+# define	APM_STAT_LINE_ON	1
 
-#define         APM_STAT_BATT_HIGH      0
-#define         APM_STAT_BATT_LOW       1
-#define         APM_STAT_BATT_CRITICAL  2
-#define         APM_STAT_BATT_CHARGING  3
+# define	APM_STAT_BATT_HIGH	0
+# define	APM_STAT_BATT_LOW	1
+# define	APM_STAT_BATT_CRITICAL	2
+# define	APM_STAT_BATT_CHARGING	3
 
 int first = 1;
 void battery_check(void)
@@ -544,7 +544,7 @@ void battery_check(void)
                 fprintf(stderr, "xbattbar: ioctl APMIO_GETINFO failed\n");
                 exit(1);
         }
-        close (fd);
+        close(fd);
 
         ++elapsed_time;
 
@@ -590,11 +590,11 @@ void battery_check(void)
 
 #if defined(__NetBSD__) || defined(__OpenBSD__)
 
-#include <machine/apmvar.h>
+# include <machine/apmvar.h>
 
-#define         _PATH_APM_SOCKET        "/var/run/apmdev"
-#define         _PATH_APM_CTLDEV        "/dev/apmctl"
-#define         _PATH_APM_NORMAL        "/dev/apm"
+# define	_PATH_APM_SOCKET	"/var/run/apmdev"
+# define	_PATH_APM_CTLDEV	"/dev/apmctl"
+# define	_PATH_APM_NORMAL	"/dev/apm"
 
 int first = 1;
 void battery_check(void)
@@ -644,15 +644,15 @@ void battery_check(void)
 
 #ifdef linux
 
-#include <errno.h>
+# include <errno.h>
 
 # if defined(APM)
 
-#include <linux/apm_bios.h>
+#  include <linux/apm_bios.h>
 
-#define         APM_PROC                "/proc/apm"
-#define         APM_STAT_LINE_OFF       0
-#define         APM_STAT_LINE_ON        1
+#  define	APM_PROC		"/proc/apm"
+#  define	APM_STAT_LINE_OFF	0
+#  define	APM_STAT_LINE_ON	1
 
 typedef struct apm_info {
     const char  driver_version[10];
@@ -684,7 +684,7 @@ void battery_check(void)
         }
 
         fgets(buf, sizeof(buf) - 1, pt);
-        buf[ sizeof( buf ) - 1 ] = '\0';
+        buf[ sizeof(buf) - 1 ] = '\0';
         sscanf(buf, "%s %d.%d %x %x %x %x %d%% %d %d\n",
                &i.driver_version,
                &i.apm_version_major,
@@ -724,7 +724,7 @@ void battery_check(void)
 
 # else /* ACPI */
 
-#define         PATH_ACPI_INTERFACE     "/sys/class/power_supply"
+#  define	PATH_ACPI_INTERFACE	"/sys/class/power_supply"
 
 int first = 1;
 void battery_check(void)
@@ -778,3 +778,4 @@ void battery_check(void)
 
 #endif /* linux */
 
+/* End of file */
